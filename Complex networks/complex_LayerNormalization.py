@@ -9,6 +9,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import Parameter
+from torch.autograd import Variable
 
 class _ComplexLayerNorm(nn.Module):
 
@@ -20,7 +21,7 @@ class _ComplexLayerNorm(nn.Module):
         if learnable:
             W = Parameter
         else:
-            W = torch.Tensor
+            W = Variable
         if self.affine:
             self.weight = W(torch.Tensor(num_features, 3))
             self.bias = W(torch.Tensor(num_features, 2))
