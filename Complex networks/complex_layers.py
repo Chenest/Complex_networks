@@ -21,7 +21,7 @@ class ComplexConvTranspose2d(nn.Module):
         self.conv_tran_i = nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding,
                                               output_padding, groups, bias, dilation, padding_mode)
 
-    def forward(self, input_r, input_i):
+    def forward(self, input):
         assert (input.shape[-1] == 2)
         assert (len(input.shape) == 5)
         return torch.stack([self.fc_r(input[:, :, :, :, 0]) - self.fc_i(input[:, :, :, :, 1]),
@@ -36,7 +36,7 @@ class ComplexConv2d(nn.Module):
         self.conv_r = nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias)
         self.conv_i = nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias)
 
-    def forward(self, input_r, input_i):
+    def forward(self, input):
         assert (input.shape[-1] == 2)
         assert (len(input.shape) == 5)
         return torch.stack([self.fc_r(input[:, :, :, :, 0]) - self.fc_i(input[:, :, :, :, 1]),
