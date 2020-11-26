@@ -30,6 +30,11 @@ class Cmax_pool2d(nn.Module):
                                self.dilation, self.ceil_mode, self.return_indices).unsqueeze(-1)
         return torch.cat([output1, output2], dim=-1)
 
+    def extra_repr(self):
+        return 'kernel_size={kernel_size}, stride={stride}, padding={padding}' \
+            ', dilation={dilation}, ceil_mode={ceil_mode}'.format(**self.__dict__)
+
+
 class Cavg_pool2d(nn.Module):
     def __init__(self, kernel_size, stride=None, padding=0, dilation=1,
                  ceil_mode=False, count_include_pad=False, divisor_override=None):
@@ -49,4 +54,8 @@ class Cavg_pool2d(nn.Module):
         output2 = F.avg_pool2d(input[:, :, :, 1], self.kernel_size, self.stride, self.padding,
                                self.dilation, self.ceil_mode, self.count_include_pad, self.divisor_override).unsqueeze(-1)
         return torch.cat([output1, output2], dim=-1)
+
+    def extra_repr(self):
+        return 'kernel_size={kernel_size}, stride={stride}, padding={padding}' \
+            ', dilation={dilation}, ceil_mode={ceil_mode}'.format(**self.__dict__)
 

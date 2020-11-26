@@ -17,6 +17,7 @@ from torch.nn import Parameter
 from torch.autograd import Variable
 
 class modReLU(nn.Module):
+
     def __init__(self, learnable=True):
         super(modReLU, self).__init__()
         self.b = Tensor(1).fill_(1)
@@ -38,10 +39,12 @@ class modReLU(nn.Module):
         size = input.size()
         x = input.reshape(-1, 2)
         absz = torch.sqrt(x[:, 0]**2 + x[:, 1]**2)
-        output = torch.relu(1 + self.b.expand_as(absz) / absz) * x
+        output = torch.relu(1 + self.b.expand_as(absz) / absz).reshape(-1, 1) * x
         return output.reshape(size)
 
+
 class modLeakyReLU(nn.Module):
+
     def __init__(self, scope=0.1, learnable=True):
         super(modLeakyReLU, self).__init__()
         self.b = Tensor(1).fill_(1)
@@ -64,10 +67,17 @@ class modLeakyReLU(nn.Module):
         size = input.size()
         x = input.reshape(-1, 2)
         absz = torch.sqrt(x[:, 0]**2 + x[:, 1]**2)
-        output = torch.leaky_relu(1 + self.b.expand_as(absz) / absz, self.scope).reshape(-1, 1) * x
+        output = F.leaky_relu(1 + self.b.expand_as(absz) / absz, self.scope).reshape(-1, 1) * x
         return output.reshape(size)
 
+    def extra_repr(self):
+        return 'scope={}'.format(
+            self.scope
+        )
+
+
 class modSigmoid(nn.Module):
+
     def __init__(self, learnable=True):
         super(modSigmoid, self).__init__()
         self.b = Tensor(1).fill_(1)
@@ -92,7 +102,9 @@ class modSigmoid(nn.Module):
         output = torch.sigmoid(1 + self.b.expand_as(absz) / absz).reshape(-1, 1) * x
         return output.reshape(size)
 
+
 class modTanh(nn.Module):
+
     def __init__(self, learnable=True):
         super(modTanh, self).__init__()
         self.b = Tensor(1).fill_(1)
@@ -117,28 +129,41 @@ class modTanh(nn.Module):
         output = torch.tanh(1 + self.b.expand_as(absz) / absz).reshape(-1, 1) * x
         return output.reshape(size)
 
+
 class CReLU(nn.Module):
+
     def __init__(self):
         super(CReLU, self).__init__()
 
     def forward(self, input):
         return F.relu(input)
 
+
 class CLeakyReLU(nn.Module):
+
     def __init__(self, scope=0.1):
         super(CLeakyReLU, self).__init__()
         self.scope = scope
+
     def forward(self, input):
         return F.leaky_relu(input, self.scope)
 
+    def extra_repr(self):
+        return 'scope={}'.format(
+            self.scope
+        )
+
 class CSigmoid(nn.Module):
+
     def __init__(self):
         super(CSigmoid, self).__init__()
 
     def forward(self, input):
         return F.sigmoid(input)
 
+
 class CTanh(nn.Module):
+
     def __init__(self):
         super(CTanh, self).__init__()
 
@@ -154,3 +179,4 @@ class zReLU(nn.Module):
         x = input.reshape(-1, 2)
         output = x.where((x[:, 0] < 0)|(x[:, 1] > 0), torch.zeros_like(x))
         return output.reshape(size)
+

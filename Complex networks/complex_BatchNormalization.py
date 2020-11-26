@@ -15,6 +15,11 @@ class NaiveComplexBatchNorm1d(nn.Module):
 
     def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
         super(NaiveComplexBatchNorm1d, self).__init__()
+        self.num_features = num_features
+        self.eps = eps
+        self.momentum = momentum
+        self.affine = affine
+        self.track_running_stats = track_running_stats
         self.bn_r = nn.BatchNorm1d(num_features, eps, momentum, affine, track_running_stats)
         self.bn_i = nn.BatchNorm1d(num_features, eps, momentum, affine, track_running_stats)
 
@@ -25,10 +30,21 @@ class NaiveComplexBatchNorm1d(nn.Module):
         output = torch.cat([re, im], dim=-1)
         return output
 
+    def extra_repr(self):
+        return '{}, eps={}, momentum={}, affine={}, track_running_stats={}'.format(
+            self.num_features, self.eps, self.momentum, self.affine, self.track_running_stats
+        )
+
+
 class NaiveComplexBatchNorm2d(nn.Module):
 
     def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
         super(NaiveComplexBatchNorm2d, self).__init__()
+        self.num_features = num_features
+        self.eps = eps
+        self.momentum = momentum
+        self.affine = affine
+        self.track_running_stats = track_running_stats
         self.bn_r = nn.BatchNorm2d(num_features, eps, momentum, affine, track_running_stats)
         self.bn_i = nn.BatchNorm2d(num_features, eps, momentum, affine, track_running_stats)
 
@@ -38,6 +54,11 @@ class NaiveComplexBatchNorm2d(nn.Module):
         re, im = self.bn_r(input[:, :, :, :, 0]).unsqueeze(-1), self.bn_i(input[:, :, :, :, 1]).unsqueeze(-1)
         output = torch.cat([re, im], dim=-1)
         return output
+
+    def extra_repr(self):
+        return '{}, eps={}, momentum={}, affine={}, track_running_stats={}'.format(
+            self.num_features, self.eps, self.momentum, self.affine, self.track_running_stats
+        )
 
 
 class _ComplexBatchNorm(nn.Module):
@@ -82,6 +103,11 @@ class _ComplexBatchNorm(nn.Module):
             nn.init.constant_(self.weight[:, :2], 1.4142135623730951)
             nn.init.zeros_(self.weight[:, 2])
             nn.init.zeros_(self.bias)
+
+    def extra_repr(self):
+        return '{}, eps={}, momentum={}, affine={}, track_running_stats={}'.format(
+            self.num_features, self.eps, self.momentum, self.affine, self.track_running_stats
+        )
 
 
 class ComplexBatchNorm2d(_ComplexBatchNorm):
@@ -236,8 +262,3 @@ class ComplexBatchNorm1d(_ComplexBatchNorm):
         del Crr, Cri, Cii, Rrr, Rii, Rri, det, s, t
         return torch.stack([input_r, input_i], dim=-1)
 
-
-LN = ComplexBatchNorm1d(128)
-x = torch.randn(32, 128, 2)
-y = LN(x)
-print(y.shape)

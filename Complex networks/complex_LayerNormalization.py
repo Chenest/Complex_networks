@@ -36,6 +36,12 @@ class _ComplexLayerNorm(nn.Module):
             nn.init.zeros_(self.weight[:, 2])
             nn.init.zeros_(self.bias)
 
+    def extra_repr(self):
+        return '{}, eps={}, affine={}, learnable={}'.format(
+            self.num_features, self.eps, self.affine, self.learnable
+        )
+
+
 class ComplexLayerNorm1d(_ComplexLayerNorm):
 
     def forward(self, input):
