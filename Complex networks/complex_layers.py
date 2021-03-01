@@ -187,8 +187,8 @@ class ComplexLinear(nn.Module):
         # bs*in_features*2
         assert (input.shape[-1] == 2)
         assert (len(input.shape) == 3)
-        input = torch.stack([self.fc_r(input[:, :, 0]) - self.fc_i(input[:, :, 1]) + self.bias[:, 0],
-                            self.fc_r(input[:, :, 1]) + self.fc_i(input[:, :, 0]) + self.bias[:, 1]], dim=-1)
+        input = torch.stack([self.fc_r(input[:, :, 0]) - self.fc_i(input[:, :, 1]),
+                            self.fc_r(input[:, :, 1]) + self.fc_i(input[:, :, 0])], dim=-1)
         return input + self.bias
 
     def extra_repr(self):
